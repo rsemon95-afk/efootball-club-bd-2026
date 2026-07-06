@@ -50,3 +50,92 @@ resultList.innerHTML = `
 }
 
 loadData();
+async function addTeam(){
+
+const name = document.getElementById("teamName").value;
+
+if(name==""){
+alert("Team Name Required");
+return;
+}
+
+const { error } = await supabase
+.from("teams")
+.insert([
+{
+name:name,
+played:0,
+win:0,
+draw:0,
+loss:0,
+gf:0,
+ga:0,
+points:0
+}
+]);
+
+if(error){
+
+alert(error.message);
+
+}else{
+
+alert("Team Added Successfully");
+
+document.getElementById("teamName").value="";
+
+loadTeams();
+
+}
+
+}
+
+async function loadTeams(){
+
+const { data } = await supabase
+
+.from("teams")
+
+.select("*")
+
+.order("points",{ascending:false});
+
+table.innerHTML="";
+
+teamCount.innerHTML=data.length;
+
+data.forEach((t,index)=>{
+
+table.innerHTML+=`
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>${t.name}</td>
+
+<td>${t.played}</td>
+
+<td>${t.win}</td>
+
+<td>${t.draw}</td>
+
+<td>${t.loss}</td>
+
+<td>${t.gf}</td>
+
+<td>${t.ga}</td>
+
+<td>${t.gf-t.ga}</td>
+
+<td>${t.points}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+loadTeams();
